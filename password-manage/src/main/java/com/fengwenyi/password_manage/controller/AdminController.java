@@ -12,6 +12,7 @@ import com.fengwenyi.password_manage.utils.TokenUtil;
 import com.fengwenyi.password_manage.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -82,7 +83,33 @@ public class AdminController {
         return Utils.gson().toJson(result);
     }
 
-    // 设置管理员账号
+    /**
+     * 设置管理员账号
+     * @param admin
+     * @return
+     */
+    @PostMapping("/addAdmin")
+    public String addAdmin(@RequestBody Admin admin) {
+        Result result = new Result();
+        result.setResult(ReturnCodeEnum.INIT);
+        if (admin != null
+                && !StringUtil.isNullStr(admin.getUsername())) {
+            // 保证管理员账号只存在一个
+            List<Admin> adminList = adminService.selectList(null);
+            if (adminList == null || adminList.size() == 0) {
+                boolean rs = adminService.insert(admin);
+                if (rs)
+                    result.setResult(ReturnCodeEnum.SUCCESS);
+                else
+                    result.setResult(ReturnCodeEnum.ERROR_DB_SAVE_FAIL);
+            } else {
+                result.setResult(ReturnCodeEnum.ERROR_ADMIN_ACCOUNT_EXIST);
+            }
+        } else {
+            result.setResult(ReturnCodeEnum.ERROR_ADMIN_ACCOUNT_NULL);
+        }
+        return Utils.gson().toJson(result);
+    }
 
 }
 

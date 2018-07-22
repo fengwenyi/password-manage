@@ -9,17 +9,25 @@ public enum ReturnCodeEnum implements IReturnCode {
 
     INIT(-1, "(Error)init"),
 
-    ERROR_LOGIN_ACCOUNT_NOT(14, "(Error)帐号异常或不存在"),
-    ERROR_LOGIN_ACCOUNT_NOLL(11, "(Error)帐号不能为空"),
-    ERROR_LOGIN_TOKEN_SAFE_FAIL(12, "(Error)Token加密失败"),
-    ERROR_LOGIN_ACCOUNT_INCORRECT(13, "(Error)帐号或密码不正确"),
-    ERROR_LOGIN_PASSWORD_SAFE_FAIL(15, "(Error)密码加密失败"),
+    ERROR_LOGIN_ACCOUNT_NOT(1101, "(Error)帐号异常或不存在"),
+    ERROR_LOGIN_ACCOUNT_NOLL(1102, "(Error)帐号不能为空"),
+    ERROR_LOGIN_TOKEN_SAFE_FAIL(1103, "(Error)Token加密失败"),
+    ERROR_LOGIN_ACCOUNT_INCORRECT(1104, "(Error)帐号或密码不正确"),
+    ERROR_LOGIN_PASSWORD_SAFE_FAIL(1105, "(Error)密码加密失败"),
 
-    ERROR_TOKEN_VERIFY_FAIL(21, "(Error)Token验证失败"),
+    ERROR_TOKEN_VERIFY_FAIL(1201, "(Error)Token验证失败"),
 
-    ERROR_PASSWORD_PARAM_NULL(31, "(Error)名称和帐号不能为空"),
+    ERROR_PASSWORD_PARAM_NULL(1301, "(Error)名称和帐号不能为空"),
 
-    ERROR_DB_SAVE_FAIL(41, "(Error)数据库保存失败"),
+    ERROR_DB_SAVE_FAIL(1401, "(Error)数据库保存失败"),
+
+    ERROR_ADMIN_ACCOUNT_NULL(1501, "(Error)管理员账号不能为空"),
+    ERROR_ADMIN_ACCOUNT_EXIST(1502, "(Error)管理员账号已存在，不能新增"),
+
+    ERROR_EXCEPTION(1601, "(Error)500错误"),
+
+    ERROR_KEY_NULL(1701, "(Error)密钥不能为空"),
+    ERROR_KEY_EXIST(1702, "(Error)密钥已存在，不能新增"),
 
     SUCCESS(0, "Success")
     ;
