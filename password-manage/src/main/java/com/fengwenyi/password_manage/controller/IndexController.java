@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * index
+ * 初始化控制器
+ * <p>
+ *     初始化判断
+ * </p>
  * @author Wenyi Feng
  */
 @RestController

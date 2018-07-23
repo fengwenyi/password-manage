@@ -10,6 +10,7 @@ import com.fengwenyi.password_manage.service.AdminService;
 import com.fengwenyi.password_manage.utils.Constact;
 import com.fengwenyi.password_manage.utils.TokenUtil;
 import com.fengwenyi.password_manage.utils.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,22 +24,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 管理员控制器
  * <p>
- *  验证
+ *     有以下功能：
  * </p>
+ * <ul>
+ *     <li>登录认证</li>
+ *     <li>生成Token</li>
+ *     <li>初始化管理员账号</li>
+ * </ul>
  *
  * @author Wenyi Feng
- * @since 2018-07-18
  */
 @RestController
 @RequestMapping(value = "/admin", produces = {"application/json; charset=utf-8"})
+@Slf4j
 public class AdminController {
 
     @Autowired
     private AdminService adminService;
 
     /**
-     * 默认取第一条验证
+     * 登录认证
+     * 关于账号，我们想设计成数据库只保留一条数据
+     * 在代码中也确实有这样做了
+     * 但是，难免有部分玩家往数据库灌输
+     * 所以我们默认取第一条验证
+     * 但是这也有一个问题：多条如何认证？
+     * 比如第2条才是真正的登录信息，第1/3/4或是其他都是不正确的
+     * @param username 用户名
+     * @param password 密码
      * @return
      */
     @PostMapping("/login")
@@ -85,23 +100,31 @@ public class AdminController {
 
     /**
      * 设置管理员账号
-     * @param admin
+     * @param username 用户名
+     * @param password 密码
      * @return
      */
     @PostMapping("/addAdmin")
-    public String addAdmin(@RequestBody Admin admin) {
+    public String addAdmin(@RequestBody String username, String password) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
-        if (admin != null
-                && !StringUtil.isNullStr(admin.getUsername())) {
+        if (!StringUtil.isNullStr(username)) {
             // 保证管理员账号只存在一个
             List<Admin> adminList = adminService.selectList(null);
             if (adminList == null || adminList.size() == 0) {
-                boolean rs = adminService.insert(admin);
-                if (rs)
-                    result.setResult(ReturnCodeEnum.SUCCESS);
-                else
-                    result.setResult(ReturnCodeEnum.ERROR_DB_SAVE_FAIL);
+                Admin admin = new Admin();
+                admin.setUsername(username);
+                try {
+                    admin.setPassword(SafeUtil.MD5(password));
+                    boolean rs = adminService.insert(admin);
+                    if (rs)
+                        result.setResult(ReturnCodeEnum.SUCCESS);
+                    else
+                        result.setResult(ReturnCodeEnum.ERROR_DB_SAVE_FAIL);
+                } catch (NoSuchAlgorithmException e) {
+                    result.setResult(ReturnCodeEnum.ERROR_EXCEPTION);
+                    log.error("MD5加密失败：{}", e.getMessage());
+                }
             } else {
                 result.setResult(ReturnCodeEnum.ERROR_ADMIN_ACCOUNT_EXIST);
             }

@@ -6,6 +6,7 @@ import com.fengwenyi.javalib.util.StringUtil;
 import com.fengwenyi.password_manage.domain.Key;
 import com.fengwenyi.password_manage.enums.ReturnCodeEnum;
 import com.fengwenyi.password_manage.service.KeyService;
+import com.fengwenyi.password_manage.utils.Constact;
 import com.fengwenyi.password_manage.utils.Utils;
 import com.fengwenyi.password_manage.vo.KeyVO;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
- * 密钥
+ * 密钥控制器
+ * <p>
+ *     生成密钥、保存密钥
+ * </p>
  * @author Wenyi Feng
  */
 @RestController
@@ -29,48 +33,62 @@ public class KeyController {
 
     // 生成密钥
     @GetMapping("/getKey")
-    public String getKey() {
+    public String getKey(@RequestHeader(Constact.KEY_TOKEN) String token) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
-        try {
-            String[] keies = RSAUtil.getKey();
-            String privateKey = keies[0];
-            String publicKey = keies[1];
-            KeyVO keyVO = new KeyVO();
-            keyVO.setPrivateKey(privateKey);
-            keyVO.setPublicKey(publicKey);
-            result.setResult(ReturnCodeEnum.SUCCESS, keyVO);
-        } catch (NoSuchAlgorithmException e) {
-            result.setResult(ReturnCodeEnum.ERROR_EXCEPTION);
-            log.error("生成密钥失败：{}", e.getMessage());
+        boolean isVerify = Utils.verify(token);
+        if (isVerify) {
+            try {
+                String[] keys = RSAUtil.getKey();
+                String privateKey = keys[0];
+                String publicKey = keys[1];
+                KeyVO keyVO = new KeyVO();
+                keyVO.setPrivateKey(privateKey);
+                keyVO.setPublicKey(publicKey);
+                result.setResult(ReturnCodeEnum.SUCCESS, keyVO);
+            } catch (NoSuchAlgorithmException e) {
+                result.setResult(ReturnCodeEnum.ERROR_EXCEPTION);
+                log.error("生成密钥失败：{}", e.getMessage());
+            }
+        } else {
+            result.setResult(ReturnCodeEnum.ERROR_TOKEN_VERIFY_FAIL);
         }
         return Utils.gson().toJson(result);
     }
 
     /**
-     * 写入数据库
-     * @param key
+     * 将密钥写入数据库
+     * @param privateKey 私钥
+     * @param publicKey  公钥
      * @return
      */
     @PostMapping("/addKey")
-    public String addkey(@RequestBody Key key) {
+    public String addkey(@RequestHeader(Constact.KEY_TOKEN) String token,
+                         String privateKey, String publicKey) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
-        if (key == null
-                || StringUtil.isNullStr(key.getPrivateKey())
-                || StringUtil.isNullStr(key.getPublicKey()))
-            result.setResult(ReturnCodeEnum.ERROR_KEY_NULL);
-        else {
-            // 如果存在多个密钥，那么就无法准确对密钥进行解密
-            List<Key> keyList = keyService.selectList(null);
-            if (keyList == null || keyList.size() == 0) {
-                boolean rs = keyService.insert(key);
-                if (rs)
-                    result.setResult(ReturnCodeEnum.SUCCESS);
-                else
-                    result.setResult(ReturnCodeEnum.ERROR_DB_SAVE_FAIL);
-            } else
-                result.setResult(ReturnCodeEnum.ERROR_KEY_EXIST);
+        boolean isVerify = Utils.verify(token);
+        if (isVerify) {
+            if (StringUtil.isNullStr(privateKey)
+                    || StringUtil.isNullStr(publicKey))
+                result.setResult(ReturnCodeEnum.ERROR_KEY_NULL);
+            else {
+                // 如果存在多个密钥，那么就无法准确对密钥进行解密
+                List<Key> keyList = keyService.selectList(null);
+                if (keyList == null || keyList.size() == 0) {
+                    Key key = new Key();
+                    key.setPrivateKey(privateKey);
+                    key.setPublicKey(publicKey);
+                    boolean rs = keyService.insert(key);
+                    if (rs)
+                        result.setResult(ReturnCodeEnum.SUCCESS);
+                    else
+                        result.setResult(ReturnCodeEnum.ERROR_DB_SAVE_FAIL);
+                } else
+                    result.setResult(ReturnCodeEnum.ERROR_KEY_EXIST);
+            }
+        } else {
+            result.setResult(ReturnCodeEnum.ERROR_TOKEN_VERIFY_FAIL);
         }
         return Utils.gson().toJson(result);
     }
