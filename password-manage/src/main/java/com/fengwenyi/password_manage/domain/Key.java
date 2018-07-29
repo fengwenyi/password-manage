@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class Key extends Model<Key> {
 
     @TableId(value = "id", type = IdType.ID_WORKER)
-    private String id;
+    private Long id;
     /**
      * 公钥
      */

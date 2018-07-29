@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class Admin extends Model<Admin> {
 
     @TableId(value = "id", type = IdType.ID_WORKER)
-    private String id;
+    private Long id;
     /**
      * 用户名
      */

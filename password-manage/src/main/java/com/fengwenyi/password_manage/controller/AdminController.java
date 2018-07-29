@@ -7,18 +7,15 @@ import com.fengwenyi.javalib.util.StringUtil;
 import com.fengwenyi.password_manage.domain.Admin;
 import com.fengwenyi.password_manage.enums.ReturnCodeEnum;
 import com.fengwenyi.password_manage.service.AdminService;
-import com.fengwenyi.password_manage.utils.Constact;
+import com.fengwenyi.password_manage.utils.Constant;
 import com.fengwenyi.password_manage.utils.TokenUtil;
 import com.fengwenyi.password_manage.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +55,6 @@ public class AdminController {
      */
     @PostMapping("/login")
     public String login(String username, String password) {
-
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
         // 校验帐号是否为空
@@ -74,7 +70,7 @@ public class AdminController {
                 Admin admin = adminList.get(0);
                 // 帐号密码是否正确
                 try {
-                    if (admin.getPassword().equals(username)
+                    if (admin.getUsername().equals(username)
                             && admin.getPassword().equals(SafeUtil.MD5(password))) {
                         try {
                             String s = username + System.currentTimeMillis()
@@ -82,7 +78,7 @@ public class AdminController {
                             String token = SafeUtil.MD5(s);
                             TokenUtil.newInstance().setToken(token);
                             Map<String, String> map = new HashMap<>();
-                            map.put(Constact.KEY_TOKEN, token);
+                            map.put(Constant.KEY_TOKEN, token);
                             result.setResult(ReturnCodeEnum.SUCCESS, map);
                         } catch (NoSuchAlgorithmException e) {
                             result.setResult(ReturnCodeEnum.ERROR_LOGIN_TOKEN_SAFE_FAIL);
@@ -105,7 +101,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/addAdmin")
-    public String addAdmin(@RequestBody String username, String password) {
+    public String addAdmin(String username, String password) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
         if (!StringUtil.isNullStr(username)) {
@@ -116,6 +112,7 @@ public class AdminController {
                 admin.setUsername(username);
                 try {
                     admin.setPassword(SafeUtil.MD5(password));
+                    admin.setCreateTime(new Date());
                     boolean rs = adminService.insert(admin);
                     if (rs)
                         result.setResult(ReturnCodeEnum.SUCCESS);

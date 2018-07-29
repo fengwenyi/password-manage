@@ -9,7 +9,7 @@ import com.fengwenyi.password_manage.domain.Password;
 import com.fengwenyi.password_manage.enums.ReturnCodeEnum;
 import com.fengwenyi.password_manage.service.KeyService;
 import com.fengwenyi.password_manage.service.PasswordService;
-import com.fengwenyi.password_manage.utils.Constact;
+import com.fengwenyi.password_manage.utils.Constant;
 import com.fengwenyi.password_manage.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class PasswordController {
 
     // 添加
     @PostMapping("/addPassword")
-    public String addPassword(@RequestHeader(Constact.KEY_TOKEN) String token,
+    public String addPassword(@RequestHeader(Constant.KEY_TOKEN) String token,
                               String name, String account, String password, String explain) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
@@ -92,7 +92,7 @@ public class PasswordController {
     @GetMapping("/getPasswordPage/{page}")
     public Page<Password> getPasswordPage(@PathVariable("page") Integer page) {
 
-        Page<Password> passwordPage = passwordService.selectPage(new Page<>(page, Constact.PAGE_SIZE));
+        Page<Password> passwordPage = passwordService.selectPage(new Page<>(page, Constant.PAGE_SIZE));
 
         return passwordPage;
     }

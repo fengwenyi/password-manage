@@ -6,7 +6,7 @@ import com.fengwenyi.javalib.util.StringUtil;
 import com.fengwenyi.password_manage.domain.Key;
 import com.fengwenyi.password_manage.enums.ReturnCodeEnum;
 import com.fengwenyi.password_manage.service.KeyService;
-import com.fengwenyi.password_manage.utils.Constact;
+import com.fengwenyi.password_manage.utils.Constant;
 import com.fengwenyi.password_manage.utils.Utils;
 import com.fengwenyi.password_manage.vo.KeyVO;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class KeyController {
 
     // 生成密钥
     @GetMapping("/getKey")
-    public String getKey(@RequestHeader(Constact.KEY_TOKEN) String token) {
+    public String getKey(@RequestHeader String token) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
         boolean isVerify = Utils.verify(token);
@@ -63,7 +64,7 @@ public class KeyController {
      * @return
      */
     @PostMapping("/addKey")
-    public String addkey(@RequestHeader(Constact.KEY_TOKEN) String token,
+    public String addKey(@RequestHeader(Constant.KEY_TOKEN) String token,
                          String privateKey, String publicKey) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
@@ -79,6 +80,7 @@ public class KeyController {
                     Key key = new Key();
                     key.setPrivateKey(privateKey);
                     key.setPublicKey(publicKey);
+                    key.setCreateTime(new Date());
                     boolean rs = keyService.insert(key);
                     if (rs)
                         result.setResult(ReturnCodeEnum.SUCCESS);
