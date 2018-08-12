@@ -11,7 +11,7 @@ function isSupport() {
  * 添加
  */
 function addToken(token) {
-	if (!isSupport) 
+	if (!isSupport()) 
 		return false
 	let storage = window.localStorage
 	storage.setItem(TOKEN, token)
@@ -22,7 +22,7 @@ function addToken(token) {
  * 删除
  */
 function deleteToken() {
-	if (!isSupport) 
+	if (!isSupport()) 
 		return false
 	let storage = window.localStorage
 	storage.removeItem(TOKEN)
@@ -33,7 +33,7 @@ function deleteToken() {
  * 修改
  */
 function updateToken(token) {
-	if (!isSupport) 
+	if (!isSupport()) 
 		return false
 	let storage = window.localStorage
 	storage.setItem(TOKEN, token)
@@ -44,7 +44,7 @@ function updateToken(token) {
  * 查询
  */
 function getToken() {
-	if (!isSupport) 
+	if (!isSupport()) 
 		return;
 	let storage = window.localStorage
 	return storage.getItem(TOKEN)

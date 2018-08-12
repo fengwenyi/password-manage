@@ -70,8 +70,8 @@ public class KeyController {
         result.setResult(ReturnCodeEnum.INIT);
         boolean isVerify = Utils.verify(token);
         if (isVerify) {
-            if (StringUtil.isNullStr(privateKey)
-                    || StringUtil.isNullStr(publicKey))
+            if (StringUtil.isEmpty(privateKey)
+                    || StringUtil.isEmpty(publicKey))
                 result.setResult(ReturnCodeEnum.ERROR_KEY_NULL);
             else {
                 // 如果存在多个密钥，那么就无法准确对密钥进行解密

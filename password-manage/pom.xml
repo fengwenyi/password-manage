@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.github.fengwenyi</groupId>
             <artifactId>JavaLib</artifactId>
-            <version>1.0.0-alpha</version>
+            <version>1.0.0-RELEASE</version>
         </dependency>
     </dependencies>
 

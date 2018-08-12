@@ -58,8 +58,8 @@ public class AdminController {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
         // 校验帐号是否为空
-        if (StringUtil.isNullStr(username)
-                || StringUtil.isNullStr(password)) {
+        if (StringUtil.isEmpty(username)
+                || StringUtil.isEmpty(password)) {
             result.setResult(ReturnCodeEnum.ERROR_LOGIN_ACCOUNT_NOLL);
         } else {
             List<Admin> adminList = adminService.selectList(null);
@@ -104,7 +104,7 @@ public class AdminController {
     public String addAdmin(String username, String password) {
         Result result = new Result();
         result.setResult(ReturnCodeEnum.INIT);
-        if (!StringUtil.isNullStr(username)) {
+        if (!StringUtil.isEmpty(username)) {
             // 保证管理员账号只存在一个
             List<Admin> adminList = adminService.selectList(null);
             if (adminList == null || adminList.size() == 0) {

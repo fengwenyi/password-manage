@@ -20,6 +20,7 @@ public enum ReturnCodeEnum implements IReturnCode {
     ERROR_PASSWORD_PARAM_NULL(1301, "(Error)名称和帐号不能为空"),
 
     ERROR_DB_SAVE_FAIL(1401, "(Error)数据库保存失败"),
+    ERROR_DB_QUERY_FAIL(1402, "(Error)数据库查询失败"),
 
     ERROR_ADMIN_ACCOUNT_NULL(1501, "(Error)管理员账号不能为空"),
     ERROR_ADMIN_ACCOUNT_EXIST(1502, "(Error)管理员账号已存在，不能新增"),
@@ -28,6 +29,10 @@ public enum ReturnCodeEnum implements IReturnCode {
 
     ERROR_KEY_NULL(1701, "(Error)密钥不能为空"),
     ERROR_KEY_EXIST(1702, "(Error)密钥已存在，不能新增"),
+
+    ERROR_APP_ACCOUNT_EXIST(1801, "(Error)此账号在应用下已存在"),
+
+    ERROR_PARAM_WRONGFUL(1901, "(Error)参数不合法"),
 
     SUCCESS(0, "Success")
     ;

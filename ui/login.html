@@ -34,15 +34,15 @@
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">登录</p>
+    <p class="login-box-msg">请登录</p>
 
-    <form action="./admin.html" method="post">
+    <form action="javascript:;" method="post" id="formLogin">
       <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="账号">
-        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+        <input type="text" name="username" class="form-control" placeholder="用户名">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="密码">
+        <input type="password" name="password" class="form-control" placeholder="密码">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
@@ -55,7 +55,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
+          <button type="submit" class="btn btn-primary btn-block btn-flat" onclick="login()" id="submit">登录</button>
         </div>
         <!-- /.col -->
       </div>
@@ -72,6 +72,12 @@
 <script src="./AdminLTE-2.4.5/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- iCheck -->
 <script src="./AdminLTE-2.4.5/plugins/iCheck/icheck.min.js"></script>
+
+<script src="./js/Constant.js"></script>
+<script src="./js/TokenUtil.js"></script>
+<script src="./js/HttpUtil.js"></script>
+<script src="./layer/layer.js"></script>
+
 <script>
   $(function () {
     $('input').iCheck({
@@ -80,6 +86,45 @@
       increaseArea: '20%' /* optional */
     });
   });
+
+  function login() {
+    //
+    let url = HOST + '/admin/login'
+    let data = $('#formLogin').serialize()
+    $.ajax({
+      url: url,
+      type: 'POST', 
+      async: true,   
+      data: data,
+      timeout: 3000,   
+      dataType: 'json', 
+      beforeSend: function(xhr){
+          // 禁用按钮防止重复提交
+          $("#submit").attr({disabled: "disabled"});
+          loadingObj = layer.load(0, {shade: false});
+      },
+      success: function(data, textStatus, jqXHR){
+          layer.close(loadingObj)
+          let code = data.code
+          if (code === 0) {
+            let token = data.data.token
+            let rs = addToken(token)
+            window.location.href = './admin.html'
+          } else {
+              let msg = data.msg
+              layer.msg(msg);
+          }
+      },
+      error: function(xhr, textStatus){
+          layer.close(loadingObj)
+          layer.msg('提交出错···');
+      },
+      complete: function(){
+        $("#submit").attr({disabled: false});
+      }
+    })
+    return false
+  }
 </script>
 </body>
 </html>

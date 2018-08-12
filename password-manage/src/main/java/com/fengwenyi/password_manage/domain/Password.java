@@ -6,6 +6,11 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fengwenyi.password_manage.utils.LongJsonDeserializer;
+import com.fengwenyi.password_manage.utils.LongJsonSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,7 +25,7 @@ import java.io.Serializable;
 public class Password extends Model<Password> {
 
     @TableId(value = "id", type = IdType.ID_WORKER)
-    private String id;
+    private Long id;
     /**
      * 名称
      */
